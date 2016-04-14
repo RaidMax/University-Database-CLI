@@ -1,3 +1,7 @@
+# Created for:
+# -Arch Linux
+# -Maria DB
+# -openJDK 1.8
 clear
 export CLASSPATH=.:./Includes/mysql-connector-java-5.1.38-bin.jar
 if [ -z `systemctl status mysqld.service | grep -o running` ]
