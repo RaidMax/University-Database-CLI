@@ -456,7 +456,7 @@ public class Database {
   public List<String> getTranscript() {
     if (currentUser.getPermissions().getPosition() == UserPermission.Position.Student) {
       List<String> transcript = new ArrayList<String>();
-      if (executeQuery(String.format("select * from `takes` natural join `course` where ID = '%d' and `grade` is not NULL order by `year` desc, `semester` desc", currentUser.getID()))) {
+      if (executeQuery(String.format("select * from `takes` natural join `course` where ID = '%d' and `grade` is not NULL order by year desc, case semester when 'Spring' then 1 when 'Summer' then 2 when 'Fall' then 3 end desc", currentUser.getID()))) {
         List<String> takenCourses = retrieveAttributes("title", "course_id", "semester", "year", "grade", "credits");
         double studentGPA = 0;
         double qualityPoints = 0;

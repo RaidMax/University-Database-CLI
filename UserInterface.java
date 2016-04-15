@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.HashMap;
 
 /**
- * User Interface class to prompt the user to navigate the CLI 
+ * User Interface class to prompt the user to navigate the CLI
  * This class is project specific
  * @author Michael Snyder
  */
@@ -166,7 +166,7 @@ public class UserInterface {
       String title      = input.readString("Enter new title: ");
       String dept_name  = input.readString("Enter new department_name: ");
       String credits    = input.readString("Enter new credit hours: ");
-      
+
       // checking primary key (course_id)
       if (primaryKey.length() > 0)
         primaryKeys.put("course_id", primaryKey);
@@ -190,15 +190,16 @@ public class UserInterface {
     else if (currentTable.equals("section")) {
       String primaryKey   = input.readString("Enter the course_id of the section to update*: ");
       String sec_id       = input.readString("Enter the sec_id of the section to update*: ");
-      String year         = input.readString("Enter new year: ");
+      String year         = input.readString("Enter the year of the section to update*: ");
+      String semester     = input.readString("Enter the semester of the section to update*: ");
       String building     = input.readString("Enter new building: ");
       String room_number  = input.readString("Enter new room_number: ");
       String time_slot_id = input.readString("Enter new time_slot_id: ");
 
-      if (sec_id.length() > 0)
-        primaryKeys.put("sec_id", sec_id);
-      if (primaryKey.length() > 0)
-        primaryKeys.put("course_id", primaryKey);
+      primaryKeys.put("sec_id", sec_id);
+      primaryKeys.put("course_id", primaryKey);
+      primaryKeys.put("year", year);
+      primaryKeys.put("semester", semester);
 
       if (building.length() > 0)
         newValues.put("building", building);
@@ -228,7 +229,7 @@ public class UserInterface {
 
       if (course_id.length() > 0)
         primaryKeys.put("course_id", course_id);
-      
+
       // make sure the user really wants to do this
       String response = input.readString(String.format("You would liked to remove \"%s\", is this correct? [y/n]: ", course_id));
 
