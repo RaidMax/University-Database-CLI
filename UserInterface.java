@@ -231,7 +231,7 @@ public class UserInterface {
         primaryKeys.put("course_id", course_id);
 
       // make sure the user really wants to do this
-      String response = input.readString(String.format("You would liked to remove \"%s\", is this correct? [y/n]: ", course_id));
+      String response = input.readString(String.format("You would like to remove \"%s\", is this correct? [y/n]: ", course_id));
 
       // this could be refactored into another method, but it's really not THAT long
       if (response.length() > 0 && (response.charAt(0) == 'Y' || response.charAt(0) == 'y')) {
@@ -258,7 +258,7 @@ public class UserInterface {
       if (year.length() > 0)
         primaryKeys.put("year", year);
 
-      String response = input.readString(String.format("You would liked to remove \"%s\" - Section %s, is this correct? [y/n]: ", course_id, sec_id));
+      String response = input.readString(String.format("You would like to remove \"%s\" - Section %s, is this correct? [y/n]: ", course_id, sec_id));
 
       if (response.length() > 0 && (response.charAt(0) == 'Y' || response.charAt(0) == 'y')) {
         if (rootDatabase.deleteTuple(currentTable, primaryKeys))
@@ -288,15 +288,16 @@ public class UserInterface {
   */
   private void dropMenu() {
     String course_id  = input.readString("Enter course_id to drop: ");
-    String response   = input.readString(String.format("You would liked to drop \"%s\", is this correct? [y/n]: ", course_id));
+    String response   = input.readString(String.format("You would like to drop \"%s\", is this correct? [y/n]: ", course_id));
 
     if (response.length() > 0 && (response.charAt(0) == 'Y' || response.charAt(0) == 'y')) {
       if (rootDatabase.dropSection(course_id))
-        System.out.println("Section enrollment successfully dropped");
+        System.out.println("If you were registered for that course, you have been dropped.");
       else
-        System.out.println("You do not appear to be enrolled in this class. Please try again.");
+        System.out.println("You do not appear to be enrolled in this course. Please try again.");
     }
   }
+
   /**
    * Once the user has selected a table and command, this method `executes` the command's function
    * @param userCMD Command the user entered

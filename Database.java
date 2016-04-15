@@ -282,7 +282,7 @@ public class Database {
 
       // format our new updated values for the query
       for (String key : attributes.keySet())
-        sb.append(String.format("`%s`='%s', ", key, attributes.get(key)));
+        sb.append(String.format("`%s`='%s', ", cleanInput(key), cleanInput(attributes.get(key))));
 
       String attributeValues = sb.toString();
 
@@ -290,7 +290,7 @@ public class Database {
 
       // format our primary keys for the query
       for (String pKey : primaryKeys.keySet())
-        sb.append(String.format("`%s`='%s' and ", pKey, primaryKeys.get(pKey)));
+        sb.append(String.format("`%s`='%s' and ", cleanInput(pKey), cleanInput(primaryKeys.get(pKey))));
 
       String primaryKeyValues = sb.toString();
 
@@ -314,6 +314,7 @@ public class Database {
    * @return True if succeeds, false otherwise
    */
   public boolean insertTuple(String tableName, String... tupleValues) {
+    tupleValues = cleanInput(tupleValues);
     for (String value : tupleValues)
       if (value == null || value.length() == 0)
         return false;
@@ -332,7 +333,7 @@ public class Database {
   public boolean deleteTuple(String tableName, HashMap<String, String> primaryKeys) {
     StringBuilder sb = new StringBuilder();
     for (String pKey : primaryKeys.keySet())
-      sb.append(String.format("`%s`='%s' and ", pKey, primaryKeys.get(pKey)));
+      sb.append(String.format("`%s`='%s' and ", cleanInput(pKey), cleanInput(primaryKeys.get(pKey))));
 
     String primaryKeyValues = sb.toString();
 
@@ -353,6 +354,7 @@ public class Database {
    * @return "one", "two", "three" -> ('one', 'two', 'three')
    */
   public String asSQLArray(String... array) {
+    array = cleanInput(array);
     StringBuilder sb = new StringBuilder();
     sb.append("(");
     for (String S : array) {
@@ -368,6 +370,21 @@ public class Database {
     return arr + ")";
   }
 
+  /**
+  * Clean the input of special charaters
+  */
+  private String[] cleanInput(String... inputs) {
+    for (int i = 0; i < inputs.length; i++)
+      inputs[i] = inputs[i].replaceAll("`|'|\"|;", "");
+    return inputs;
+  }
+
+  private String cleanInput(String input) {
+    if (input != null)
+      return input.replaceAll("`|'|\"|;", "");
+    return input;
+  }
+
   /* PROJECT SPECIFIC METHODS */
 
   /**
@@ -376,7 +393,7 @@ public class Database {
     @return Truee if added or already exists, false otherwise
   */
   private boolean addStudent(User student) {
-    if (executeQuery(String.format("select `ID` from `student` where `ID` = '%d'", student.getID()))) {
+    if (executeQuery(String.format("select `ID` from `student` where `ID` = %d", student.getID()))) {
       if (!retrieveAttribute("ID").contains(student.getID().toString()))
         if (executeCommand(String.format("insert into student values(%d, '%s', 'Biology', '0')", student.getID(), student.getName())))
           return true;
@@ -445,7 +462,7 @@ public class Database {
   */
   public boolean dropSection(String course_id) {
     if (currentUser.getPermissions().getPosition() == UserPermission.Position.Student)
-      return executeCommand(String.format("delete from `takes` where `course_id` = '%s' and ID = '%d'", course_id, currentUser.getID()));
+      return executeCommand(String.format("delete from `takes` where `course_id` = '%s' and ID = %d and `grade` is NULL", course_id, currentUser.getID()));
     return false;
   }
 
@@ -456,7 +473,7 @@ public class Database {
   public List<String> getTranscript() {
     if (currentUser.getPermissions().getPosition() == UserPermission.Position.Student) {
       List<String> transcript = new ArrayList<String>();
-      if (executeQuery(String.format("select * from `takes` natural join `course` where ID = '%d' and `grade` is not NULL order by year desc, case semester when 'Spring' then 1 when 'Summer' then 2 when 'Fall' then 3 end desc", currentUser.getID()))) {
+      if (executeQuery(String.format("select * from `takes` natural join `course` where ID = %d and `grade` is not NULL order by year desc, case semester when 'Spring' then 1 when 'Summer' then 2 when 'Fall' then 3 end desc", currentUser.getID()))) {
         List<String> takenCourses = retrieveAttributes("title", "course_id", "semester", "year", "grade", "credits");
         double studentGPA = 0;
         double qualityPoints = 0;
@@ -495,7 +512,7 @@ public class Database {
         if (totalCreditHours > 0) // we don't want to divide by zero!
           studentGPA = qualityPoints / totalCreditHours;
         transcript.add(0, "***Transcript for: " + currentUser.getName() + "***");
-        transcript.add(1, "GPA: " + Double.toString(studentGPA));
+        transcript.add(1, String.format("GPA: %.2f", studentGPA));
       }
       return transcript;
     }

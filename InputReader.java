@@ -37,6 +37,8 @@ public class InputReader {
     System.out.print(prompt);
     try {
       String inputStr = buffInput.readLine();
+      if (inputStr == null)
+        inputStr = "";
       return inputStr;
     }
     catch (IOException E) {
@@ -66,13 +68,15 @@ public class InputReader {
   /**
    * Static method to prompt the user to enter an input ( does not need an instance of the class)
    * @param prompt String to print out to the user
-   * @return INput from the user via cin
+   * @return Input from the user via cin
    */
   public static String _readString(String prompt) {
     BufferedReader userInput = new BufferedReader(new InputStreamReader(System.in));
     System.out.print(prompt);
     try {
       String inputStr = userInput.readLine();
+      if (inputStr == null)
+        inputStr = "";
       return inputStr;
     }
     catch (IOException E) {

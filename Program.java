@@ -41,7 +41,7 @@ public class Program {
 		UserInterface userInteraction = new UserInterface(rootDatabase);
 		userInteraction.mainMenu();
 
-		System.out.println("Thanks you for using the CSC3300 University Database CLI!");
+		System.out.println("Thank you for using the CSC3300 University Database CLI!");
 		rootDatabase.close();
 	}
 }
